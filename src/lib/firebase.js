@@ -8,31 +8,20 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-// for poduction use
+// Configuration loaded from environment variables
 const firebaseConfig = {
-  apiKey: "AIzaSyCk4mKaqaYNbtAeeCY77hhRhHlaVZXgCJg",
-  authDomain: "credit-tracker-236c3.firebaseapp.com",
-  projectId: "credit-tracker-236c3",
-  storageBucket: "credit-tracker-236c3.firebasestorage.app",
-  messagingSenderId: "443985382041",
-  appId: "1:443985382041:web:2cd31f46129eef77be0608",
-  measurementId: "G-2WEQ4LD3RL",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
-
-// Test Firebase configuration
-// const firebaseConfig = {
-//   apiKey: "AIzaSyArBlTmShXNcZtiM3byyRsrWIYhFbuemWc",
-//   authDomain: "credit-tracker-development.firebaseapp.com",
-//   projectId: "credit-tracker-development",
-//   storageBucket: "credit-tracker-development.firebasestorage.app",
-//   messagingSenderId: "377224360058",
-//   appId: "1:377224360058:web:7ee22e527c3ad9341a4bc3",
-//   measurementId: "G-ZJB70EH3XQ",
-// };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+getAnalytics(app); // Initialize analytics
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 export const db = getFirestore(app);
