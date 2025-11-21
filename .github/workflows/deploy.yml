@@ -3,7 +3,7 @@ name: Build and Deploy to EC2
 on:
   push:
     branches:
-      - mainnn
+      - main # TODO change to main once the all setup is done
   workflow_dispatch:
 
 env:
