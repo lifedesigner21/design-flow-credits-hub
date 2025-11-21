@@ -28,8 +28,7 @@ if [ -z "$EMAIL" ]; then
 fi
 
 # Domain configuration
-DOMAIN1="www.designuiux.com"
-DOMAIN2="designuiux.com"
+DOMAIN="designuiux.com"
 
 echo -e "${YELLOW}Installing Certbot...${NC}"
 apt-get update
@@ -39,30 +38,24 @@ apt-get install -y certbot
 mkdir -p /var/www/certbot
 
 echo -e "${BLUE}========================================${NC}"
-echo -e "${BLUE}Obtaining SSL certificate for ${DOMAIN1}${NC}"
+echo -e "${BLUE}Obtaining SSL certificate for ${DOMAIN}${NC}"
 echo -e "${BLUE}========================================${NC}"
 
-# Get certificate for www.designuiux.com
-certbot certonly --webroot \
-    -w /var/www/certbot \
-    -d ${DOMAIN1} \
+# Stop any running containers on port 80
+echo -e "${YELLOW}Stopping containers to free port 80...${NC}"
+docker stop $(docker ps -q) 2>/dev/null || true
+
+# Get certificate for designuiux.com using standalone mode
+certbot certonly --standalone \
+    -d ${DOMAIN} \
     --email ${EMAIL} \
     --agree-tos \
     --non-interactive \
     --force-renewal
 
-echo -e "${BLUE}========================================${NC}"
-echo -e "${BLUE}Obtaining SSL certificate for ${DOMAIN2}${NC}"
-echo -e "${BLUE}========================================${NC}"
-
-# Get certificate for designuiux.com
-certbot certonly --webroot \
-    -w /var/www/certbot \
-    -d ${DOMAIN2} \
-    --email ${EMAIL} \
-    --agree-tos \
-    --non-interactive \
-    --force-renewal
+# Restart containers
+echo -e "${YELLOW}Restarting application...${NC}"
+docker start design-flow-app 2>/dev/null || true
 
 # Set up auto-renewal cron job
 echo -e "${YELLOW}Setting up automatic certificate renewal...${NC}"
@@ -70,10 +63,12 @@ echo -e "${YELLOW}Setting up automatic certificate renewal...${NC}"
 # Create renewal script
 cat > /usr/local/bin/renew-ssl.sh << 'SCRIPT'
 #!/bin/bash
-certbot renew --quiet --webroot -w /var/www/certbot
-if [ $? -eq 0 ]; then
-    docker exec nginx-proxy nginx -s reload
-fi
+# Stop containers to free port 80
+docker stop $(docker ps -q) 2>/dev/null
+# Renew certificate
+certbot renew --quiet --standalone
+# Restart containers
+docker start design-flow-app nginx-proxy 2>/dev/null
 SCRIPT
 
 chmod +x /usr/local/bin/renew-ssl.sh
@@ -84,18 +79,15 @@ chmod +x /usr/local/bin/renew-ssl.sh
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}SSL Setup Complete!${NC}"
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}Certificates obtained for:${NC}"
-echo -e "${GREEN}  - ${DOMAIN1}${NC}"
-echo -e "${GREEN}  - ${DOMAIN2}${NC}"
+echo -e "${GREEN}Certificate obtained for:${NC}"
+echo -e "${GREEN}  - ${DOMAIN}${NC}"
 echo ""
-echo -e "${YELLOW}Certificate locations:${NC}"
-echo -e "  /etc/letsencrypt/live/${DOMAIN1}/fullchain.pem"
-echo -e "  /etc/letsencrypt/live/${DOMAIN1}/privkey.pem"
-echo -e "  /etc/letsencrypt/live/${DOMAIN2}/fullchain.pem"
-echo -e "  /etc/letsencrypt/live/${DOMAIN2}/privkey.pem"
+echo -e "${YELLOW}Certificate location:${NC}"
+echo -e "  /etc/letsencrypt/live/${DOMAIN}/fullchain.pem"
+echo -e "  /etc/letsencrypt/live/${DOMAIN}/privkey.pem"
 echo ""
 echo -e "${YELLOW}Auto-renewal configured to run twice daily${NC}"
-echo -e "${YELLOW}Manual renewal command: certbot renew${NC}"
+echo -e "${YELLOW}Manual renewal command: sudo /usr/local/bin/renew-ssl.sh${NC}"
 echo ""
-echo -e "${GREEN}You can now restart your nginx-proxy container${NC}"
-echo -e "${GREEN}Command: docker restart nginx-proxy${NC}"
+echo -e "${GREEN}You can now start your nginx-proxy container${NC}"
+echo -e "${GREEN}Command: docker start nginx-proxy${NC}"
