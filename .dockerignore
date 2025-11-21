@@ -56,7 +56,5 @@ scripts/
 .editorconfig
 .eslintrc*
 .prettierrc*
-tsconfig*.json
-vite.config.ts
-tailwind.config.ts
-postcss.config.js
+# Note: tsconfig*.json, vite.config.ts, tailwind.config.ts, and postcss.config.js
+# are needed for the build process, so they are NOT excluded
