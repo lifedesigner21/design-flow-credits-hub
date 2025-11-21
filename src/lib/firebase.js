@@ -21,7 +21,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-getAnalytics(app); // Initialize analytics
+
+// Initialize analytics only if measurement ID is provided and in browser
+if (firebaseConfig.measurementId && typeof window !== 'undefined') {
+  getAnalytics(app);
+}
+
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 export const db = getFirestore(app);
