@@ -29,15 +29,15 @@ docker pull ${DOCKER_IMAGE}
 # Export Docker image for docker-compose
 export DOCKER_IMAGE=${DOCKER_IMAGE}
 
-# Stop existing containers using docker-compose
+# Stop existing containers using docker compose
 echo -e "${YELLOW}Stopping existing containers...${NC}"
 if [ -f "docker-compose.prod.yml" ]; then
-    docker-compose -f docker-compose.prod.yml down || true
+    docker compose -f docker-compose.prod.yml down || true
 fi
 
-# Start containers with docker-compose
-echo -e "${YELLOW}Starting containers with docker-compose...${NC}"
-docker-compose -f docker-compose.prod.yml up -d app nginx-proxy
+# Start containers with docker compose
+echo -e "${YELLOW}Starting containers with docker compose...${NC}"
+docker compose -f docker-compose.prod.yml up -d app nginx-proxy
 
 # Wait for containers to be healthy
 echo -e "${YELLOW}Waiting for containers to be healthy...${NC}"
@@ -51,12 +51,12 @@ if [ "$(docker ps -q -f name=design-flow-app)" ]; then
     echo -e "${GREEN}========================================${NC}"
 
     # Show container status
-    docker-compose -f docker-compose.prod.yml ps
+    docker compose -f docker-compose.prod.yml ps
 
     # Start certbot if SSL certificates exist
     if [ -d "/etc/letsencrypt/live/designuiux.com" ]; then
         echo -e "${YELLOW}Starting certbot renewal service...${NC}"
-        docker-compose -f docker-compose.prod.yml up -d certbot
+        docker compose -f docker-compose.prod.yml up -d certbot
     else
         echo -e "${YELLOW}SSL certificates not found. Run init-letsencrypt.sh to set up SSL.${NC}"
     fi
@@ -77,6 +77,6 @@ else
     echo -e "${RED}========================================${NC}"
 
     # Show logs for debugging
-    docker-compose -f docker-compose.prod.yml logs app
+    docker compose -f docker-compose.prod.yml logs app
     exit 1
 fi

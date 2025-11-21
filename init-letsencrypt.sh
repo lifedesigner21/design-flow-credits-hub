@@ -29,7 +29,7 @@ fi
 
 # Start nginx-proxy and app containers (without certbot for now)
 echo "### Starting nginx-proxy and app containers ..."
-docker-compose -f docker-compose.prod.yml up -d app nginx-proxy
+docker compose -f docker-compose.prod.yml up -d app nginx-proxy
 
 # Wait for nginx to be ready
 echo "### Waiting for nginx to start ..."
@@ -57,7 +57,7 @@ else
   if [ $staging != "0" ]; then staging_arg="--staging"; fi
 
   # Request certificate
-  docker-compose -f docker-compose.prod.yml run --rm certbot certonly \
+  docker compose -f docker-compose.prod.yml run --rm certbot certonly \
     --webroot \
     --webroot-path=/var/www/certbot \
     $staging_arg \
@@ -74,10 +74,10 @@ fi
 
 # Reload nginx to use the new certificate
 echo "### Reloading nginx configuration ..."
-docker-compose -f docker-compose.prod.yml exec nginx-proxy nginx -s reload
+docker compose -f docker-compose.prod.yml exec nginx-proxy nginx -s reload
 
 echo "### Starting certbot renewal service ..."
-docker-compose -f docker-compose.prod.yml up -d certbot
+docker compose -f docker-compose.prod.yml up -d certbot
 
 echo
 echo "### SSL setup complete!"

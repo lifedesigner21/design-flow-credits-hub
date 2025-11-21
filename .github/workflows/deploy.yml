@@ -92,7 +92,7 @@ jobs:
               docker ps | grep design-flow
             else
               echo "Application container failed to start!"
-              docker-compose -f docker-compose.prod.yml logs app
+              docker compose -f docker-compose.prod.yml logs app
               exit 1
             fi
           EOF
