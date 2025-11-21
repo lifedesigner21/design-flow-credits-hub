@@ -34,7 +34,7 @@ jobs:
           context: .
           push: true
           tags: |
-            credittrackerprod:latest
+            ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
           build-args: |
             VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY }}
             VITE_FIREBASE_AUTH_DOMAIN=${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}

@@ -1,6 +1,6 @@
 // // pages/SeedPage.tsx
-import { useEffect } from "react";
-import { seedDesignItems } from "@/lib/seedDesignitems";
+// import { useEffect } from "react";
+// import { seedDesignItems } from "@/lib/seedDesignitems";
 
 export const SeedPage = () => {
   // useEffect(() => {
