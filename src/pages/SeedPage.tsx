@@ -1,11 +1,11 @@
 // // pages/SeedPage.tsx
 import { useEffect } from "react";
-import { seedDesignItems } from "../../scripts/seedDesignitems";
+import { seedDesignItems } from "@/lib/seedDesignitems";
 
 export const SeedPage = () => {
-  useEffect(() => {
-    seedDesignItems();
-  }, []);
+  // useEffect(() => {
+  //   seedDesignItems();
+  // }, []);
 
   return (
     <div className="text-center p-8 text-green-700">
